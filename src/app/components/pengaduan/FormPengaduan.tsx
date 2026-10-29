@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Check, Copy, Download, ImagePlus, KeyRound, Send, X } from "lucide-react";
 import { KATEGORI } from "@/lib/tipe";
 import { simpanAduan } from "@/lib/lokal";
+import { SIFAT } from "@/lib/validasi"; // Pastikan import enum SIFAT dari file zodsmu
 
 const input =
   "mt-1.5 w-full rounded-xl border border-sky/50 bg-white px-4 py-3 text-sm outline-none transition focus:border-primary focus:shadow-[0_0_0_3px_rgba(23,155,194,0.25)]";
@@ -13,37 +14,33 @@ const btn =
 const MAKS = 2 * 1024 * 1024;
 
 function Galat({ pesan }: { pesan?: string }) {
-  return pesan ? <span role="alert" className="mt-1 block animate-fade-up text-xs font-medium text-gold">{pesan}</span> : null;
+  return pesan ? (
+    <span role="alert" className="mt-1 block animate-fade-up text-xs font-medium text-gold">
+      {pesan}
+    </span>
+  ) : null;
 }
 
+// Komponen Sukses tidak perlu diubah, tetap sama seperti milikmu
 function Sukses({ kode }: { kode: string }) {
   const [tersalin, setTersalin] = useState(false);
 
-async function salin() {
+  async function salin() {
     try {
-      // 1. Coba gunakan API modern (Jalan di HTTPS atau Localhost)
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(kode);
       } else {
-        // 2. Fallback untuk HTTP (saat testing di HP via IP WiFi) atau browser lawas
         const textArea = document.createElement("textarea");
         textArea.value = kode;
-        
-        // Sembunyikan textarea agar tidak merusak layout / scroll layar
         textArea.style.position = "absolute";
         textArea.style.left = "-999999px";
-        
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
-        
-        // Eksekusi perintah salin bawaan OS
         const sukses = document.execCommand("copy");
         textArea.remove();
-        
         if (!sukses) throw new Error("Fallback gagal");
       }
-
       setTersalin(true);
       setTimeout(() => setTersalin(false), 2000);
     } catch (err) {
@@ -51,9 +48,12 @@ async function salin() {
       alert("Gagal menyalin. Catat kodenya secara manual.");
     }
   }
-  
+
   function unduh() {
-    const b = new Blob([`Kode pelacakan PULSE: ${kode}\nSimpan kode ini untuk memantau aduanmu di halaman Cek Pengaduan.\n`], { type: "text/plain" });
+    const b = new Blob(
+      [`Kode pelacakan PULSE: ${kode}\nSimpan kode ini untuk memantau aduanmu di halaman Cek Pengaduan.\n`],
+      { type: "text/plain" }
+    );
     const u = URL.createObjectURL(b);
     const a = document.createElement("a");
     a.href = u;
@@ -86,20 +86,27 @@ async function salin() {
         </button>
       </div>
       <div className="relative mt-3 flex flex-wrap justify-center gap-3">
-        <Link href={`/cek-pengaduan?kode=${kode}`} className={`${btn} bg-aqua text-navy hover:shadow-[0_0_22px_rgba(126,232,221,0.9)]`}>Cek pengaduan</Link>
-        <Link href="/" className={`${btn} text-white/90 hover:bg-white/15`}>Kembali ke beranda</Link>
+        <Link href={`/cek-pengaduan?kode=${kode}`} className={`${btn} bg-aqua text-navy hover:shadow-[0_0_22px_rgba(126,232,221,0.9)]`}>
+          Cek pengaduan
+        </Link>
+        <Link href="/" className={`${btn} text-white/90 hover:bg-white/15`}>
+          Kembali ke beranda
+        </Link>
       </div>
     </div>
   );
 }
 
-export default function FormPengaduan({ angkatan }: { angkatan: number[] }) {
+// Ubah tipe angkatan menjadi string[]
+export default function FormPengaduan({ angkatan }: { angkatan: string[] }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [fields, setFields] = useState<Record<string, string>>({});
   const [kode, setKode] = useState("");
   const [berkas, setBerkas] = useState<File | null>(null);
-  const [judul, setJudul] = useState("");
+  
+  // State untuk melacak sifat (memunculkan sifat_lain jika diperlukan)
+  const [sifatTerpilih, setSifatTerpilih] = useState("");
   const [isi, setIsi] = useState("");
 
   function pilihBerkas(f: File | undefined) {
@@ -131,7 +138,11 @@ export default function FormPengaduan({ angkatan }: { angkatan: number[] }) {
         setFields(j.fields ?? {});
         return;
       }
-      simpanAduan({ kode: j.kode, judul: String(fd.get("judul")), tanggal: new Date().toISOString() });
+      
+      // Simpan riwayat lokal: karena 'judul' dihapus, kita simpan tipe sifatnya untuk referensi
+      const labelSifat = fd.get("sifat") === "Lainnya" ? fd.get("sifat_lain") : fd.get("sifat");
+      simpanAduan({ kode: j.kode, judul: `Pengaduan: ${labelSifat}`, tanggal: new Date().toISOString() });
+      
       setKode(j.kode);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
@@ -145,12 +156,11 @@ export default function FormPengaduan({ angkatan }: { angkatan: number[] }) {
 
   return (
     <form onSubmit={kirim} noValidate className="space-y-5 rounded-3xl border border-sky/40 bg-white/90 p-5 shadow-[0_10px_40px_rgba(23,155,194,0.15)] sm:p-8">
-      {/* honeypot */}
       <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" />
 
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="block text-sm font-semibold">
-          Nama lengkap
+          Nama lengkap/Inisial
           <input name="nama" required maxLength={100} autoComplete="name" className={input} />
           <Galat pesan={fields.nama} />
         </label>
@@ -158,30 +168,53 @@ export default function FormPengaduan({ angkatan }: { angkatan: number[] }) {
           Angkatan
           <select name="angkatan" required defaultValue="" className={input}>
             <option value="" disabled>Pilih angkatan</option>
-            {angkatan.map((a) => <option key={a} value={a}>{a}</option>)}
+            {angkatan.map((a) => (
+              <option key={a} value={a}>{a}</option>
+            ))}
+            <option value="Yang Lain">Yang Lain</option>
           </select>
           <Galat pesan={fields.angkatan} />
         </label>
       </div>
 
-      <label className="block text-sm font-semibold">
-        Kategori
-        <select name="kategori" required defaultValue="" className={input}>
-          <option value="" disabled>Pilih kategori</option>
-          {KATEGORI.map((k) => <option key={k}>{k}</option>)}
-        </select>
-        <Galat pesan={fields.kategori} />
-      </label>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <label className="block text-sm font-semibold">
+          Kategori
+          <select name="kategori" required defaultValue="" className={input}>
+            <option value="" disabled>Pilih kategori</option>
+            {KATEGORI.map((k) => (
+              <option key={k} value={k}>{k}</option>
+            ))}
+          </select>
+          <Galat pesan={fields.kategori} />
+        </label>
 
-      <label className="block text-sm font-semibold">
-        Judul pengaduan
-        <input name="judul" required maxLength={150} value={judul} onChange={(e) => setJudul(e.target.value)} className={input} />
-        <span className="mt-1 flex justify-between text-xs font-normal text-navy/55">
-          <span>Judul tampil di beranda. Jangan tulis data pribadi.</span>
-          <span>{judul.length}/150</span>
-        </span>
-        <Galat pesan={fields.judul} />
-      </label>
+        <label className="block text-sm font-semibold">
+          Sifat Pengaduan
+          <select 
+            name="sifat" 
+            required 
+            defaultValue="" 
+            className={input}
+            onChange={(e) => setSifatTerpilih(e.target.value)}
+          >
+            <option value="" disabled>Pilih sifat</option>
+            {SIFAT.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+          <Galat pesan={fields.sifat} />
+        </label>
+      </div>
+
+      {/* Tampil hanya jika sifat == 'Lainnya' */}
+      {sifatTerpilih === "Lainnya" && (
+        <label className="block animate-fade-up text-sm font-semibold">
+          Sebutkan sifat pengaduan
+          <input name="sifat_lain" required maxLength={100} placeholder="Contoh: Permintaan data" className={input} />
+          <Galat pesan={fields.sifat_lain} />
+        </label>
+      )}
 
       <label className="block text-sm font-semibold">
         Isi pengaduan
@@ -195,7 +228,9 @@ export default function FormPengaduan({ angkatan }: { angkatan: number[] }) {
         {berkas ? (
           <div className="mt-1.5 flex items-center justify-between gap-3 rounded-xl border border-primary/50 bg-primary/5 px-4 py-3 text-sm">
             <span className="min-w-0 truncate">{berkas.name}</span>
-            <button type="button" onClick={() => setBerkas(null)} aria-label="Hapus lampiran" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-navy/60 transition hover:bg-gold/20 hover:text-navy"><X size={18} /></button>
+            <button type="button" onClick={() => setBerkas(null)} aria-label="Hapus lampiran" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-navy/60 transition hover:bg-gold/20 hover:text-navy">
+              <X size={18} />
+            </button>
           </div>
         ) : (
           <label className="mt-1.5 flex min-h-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-sky/60 bg-sky/5 px-4 py-4 text-center text-sm text-navy/70 transition duration-300 hover:border-primary hover:bg-primary/5">

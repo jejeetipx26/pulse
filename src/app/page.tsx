@@ -16,7 +16,7 @@ async function ambilData() {
   try {
     const [hitung] = await db.query<RowDataPacket[]>("SELECT status, COUNT(*) AS n FROM pengaduan GROUP BY status");
     const [terbaru] = await db.query<RowDataPacket[]>(
-      "SELECT id, judul, kategori, status, created_at FROM pengaduan ORDER BY created_at DESC LIMIT 5"
+      "SELECT id, sifat, sifat_lain, kategori, status, created_at FROM pengaduan ORDER BY created_at DESC LIMIT 5"
     );
     const masuk = hitung.reduce((t, h) => t + Number(h.n), 0);
     const selesai = Number(hitung.find((h) => h.status === "Selesai")?.n ?? 0);
@@ -35,14 +35,14 @@ const kartu =
 const akses = [
   { href: "/buat-pengaduan", label: "Buat Pengaduan", isi: "Sampaikan keluhan, saran, atau kritik.", tombol: "Tulis", Icon: PenLine, tone: "bg-primary/15 text-primary" },
   { href: "/cek-pengaduan", label: "Cek Pengaduan", isi: "Lihat status dengan kode pelacakan.", tombol: "Cek", Icon: Search, tone: "bg-sage/20 text-sage" },
-  { href: "/about", label: "Tentang PULSE", isi: "Kenali platform dan BEM PSIK.", tombol: "Baca", Icon: Info, tone: "bg-indigo/15 text-indigo" },
+  { href: "/about", label: "Tentang PULSE", isi: "Kenali platform dan BEM KM IK.", tombol: "Baca", Icon: Info, tone: "bg-indigo/15 text-indigo" },
 ];
 
 const langkah = [
   { judul: "Tulis aspirasi", isi: "Isi nama, angkatan, kategori, lalu ceritakan masalahmu. Lampirkan gambar bila ada.", warna: "bg-primary" },
   { judul: "Simpan kode", isi: "Setelah terkirim, kamu mendapat kode pelacakan. Catat dan simpan baik-baik.", warna: "bg-gold" },
   { judul: "Pantau status", isi: "Masukkan kode di Cek Pengaduan untuk melihat aduanmu sudah dibaca atau diproses.", warna: "bg-indigo" },
-  { judul: "Terima tanggapan", isi: "BEM PSIK menindaklanjuti dan menulis tanggapan yang bisa dibaca lewat kode yang sama.", warna: "bg-leaf" },
+  { judul: "Terima tanggapan", isi: "BEM KM IK menindaklanjuti dan menulis tanggapan yang bisa dibaca lewat kode yang sama.", warna: "bg-leaf" },
 ];
 
 export default async function Beranda() {
@@ -57,7 +57,7 @@ export default async function Beranda() {
         <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-12 sm:px-5 md:grid-cols-2 md:py-20">
           <div>
             <h1 className="animate-fade-up text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
-              Sampaikan aspirasimu langsung ke BEM PSIK
+              Sampaikan aspirasimu langsung ke BEM KM IK
             </h1>
             <p className="mt-5 max-w-md animate-fade-up text-base leading-relaxed text-navy/75 sm:text-lg" style={{ animationDelay: "120ms" }}>
               PULSE menampung keluhan dan saran mahasiswa Ilmu Keperawatan

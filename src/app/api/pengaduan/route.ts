@@ -17,9 +17,12 @@ export async function POST(req: Request) {
     nama: String(fd.get("nama") ?? ""),
     angkatan: String(fd.get("angkatan") ?? ""),
     kategori: String(fd.get("kategori") ?? ""),
-    judul: String(fd.get("judul") ?? ""),
+    sifat: String(fd.get("sifat") ?? ""),
+    // Jika sifat_lain kosong atau tidak ada, set ke undefined agar Zod optional bekerja
+    sifat_lain: fd.get("sifat_lain") ? String(fd.get("sifat_lain")) : undefined,
     isi: String(fd.get("isi") ?? ""),
   });
+
   if (!hasil.success) {
     const fields: Record<string, string> = {};
     for (const i of hasil.error.issues) {
@@ -51,8 +54,10 @@ export async function POST(req: Request) {
       kode = buatKode();
       try {
         const [r] = await c.query<ResultSetHeader>(
-          "INSERT INTO pengaduan (tracking_code, nama, angkatan, kategori, judul, isi, lampiran) VALUES (?, ?, ?, ?, ?, ?, ?)",
-          [kode, d.nama, d.angkatan, d.kategori, d.judul, d.isi, namaFile]
+          // Pastikan ada 8 parameter (tracking_code, nama, angkatan, kategori, sifat, sifat_lain, isi, lampiran)
+          "INSERT INTO pengaduan (tracking_code, nama, angkatan, kategori, sifat, sifat_lain, isi, lampiran) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+          // Gunakan || null agar database MySQL benar-benar menerima nilai NULL jika sifat_lain kosong
+          [kode, d.nama, d.angkatan, d.kategori, d.sifat, d.sifat_lain || null, d.isi, namaFile]
         );
         id = r.insertId;
       } catch (e) {

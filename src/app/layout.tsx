@@ -24,10 +24,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className={poppins.variable} data-scroll-behavior="smooth">
+    <html lang="id" className={poppins.variable}>
       <body className="font-sans">
         <Navbar />
-        <main>{children}</main>
+        {/* Tambahkan bg-aqua/70 (atau nilai opasitas lain) dan bg-blend-overlay */}
+        <main className="min-h-screen bg-[url('/images/background.png')] bg-white/85 bg-blend-overlay bg-cover bg-center bg-no-repeat bg-fixed">
+  {children}
+</main>
         <Footer />
       </body>
     </html>

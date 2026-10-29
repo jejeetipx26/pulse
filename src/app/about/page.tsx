@@ -77,7 +77,7 @@ const fitur = [
   {
     Icon: MessagesSquare,
     judul: "Dijawab BEM",
-    isi: "Admin BEM PSIK membaca, memproses, dan menulis tanggapan untuk tiap aduan.",
+    isi: "Admin BEM KM IK membaca, memproses, dan menulis tanggapan untuk tiap aduan.",
     tone: "bg-gold/20 text-gold",
   },
 ];
@@ -88,7 +88,7 @@ const status = [
     isi: "Aduan baru masuk dan belum dibaca.",
     warna: "bg-indigo",
   },
-  { nama: "Dibaca", isi: "Admin BEM sudah membuka aduanmu.", warna: "bg-gold" },
+  { nama: "Dibaca", isi: "Admin BEM KM IK sudah membuka aduanmu.", warna: "bg-gold" },
   {
     nama: "Diproses",
     isi: "Aduan sedang ditindaklanjuti.",
@@ -100,7 +100,7 @@ const status = [
 const faq = [
   {
     t: "Siapa yang bisa melihat nama saya?",
-    j: "Nama dan angkatan hanya terlihat oleh admin BEM PSIK. Daftar aduan di halaman publik tidak menampilkan nama.",
+    j: "Nama dan angkatan hanya terlihat oleh Admin BEM KM IK. Daftar aduan di halaman publik tidak menampilkan nama.",
   },
   {
     t: "Kode pelacakan saya hilang, bagaimana?",
@@ -108,7 +108,7 @@ const faq = [
   },
   {
     t: "Siapa yang menanggapi aduan saya?",
-    j: "Pengurus BEM PSIK yang bertanggung jawab sesuai kategori aduan.",
+    j: "Pengurus BEM KM IK yang bertanggung jawab sesuai kategori aduan.",
   },
   {
     t: "Boleh melampirkan bukti?",
@@ -172,7 +172,7 @@ export default function About() {
               style={{ animationDelay: "240ms" }}
             >
               <span className="rounded-full bg-primary/15 px-4 py-1.5 text-ocean">
-                Dikelola BEM PSIK
+                Dikelola BEM KM IK
               </span>
               <span className="rounded-full bg-sage/20 px-4 py-1.5 text-navy">
                 Tanpa email
@@ -287,7 +287,7 @@ export default function About() {
       <section className="px-4 py-12 sm:px-5">
         <Reveal className="mx-auto max-w-6xl">
           <div className="rounded-3xl bg-linear-to-br from-mint to-aqua/60 p-7 shadow-[0_16px_40px_rgba(99,153,118,0.3)] sm:p-10">
-            <h2 className="text-2xl font-bold sm:text-3xl">BEM PSIK</h2>
+            <h2 className="text-2xl font-bold sm:text-3xl">BEM KM IK</h2>
             <p className="mt-4 max-w-2xl leading-relaxed text-navy/85">
               Badan Eksekutif Mahasiswa Program Studi Ilmu Keperawatan adalah
               organisasi mahasiswa yang menjadi penghubung antara mahasiswa dan

@@ -12,7 +12,7 @@ export default function BuatPengaduan() {
       <div className="relative mx-auto max-w-2xl px-4 py-10 sm:px-5 sm:py-14">
         <h1 className="animate-fade-up text-3xl font-bold sm:text-4xl">Buat pengaduan</h1>
         <p className="mt-3 animate-fade-up text-navy/75" style={{ animationDelay: "100ms" }}>
-          Ceritakan keluhan, saran, atau kritikmu untuk BEM PSIK. Identitasmu cukup nama dan angkatan.
+          Ceritakan keluhan, saran, atau kritikmu untuk BEM KM IK. Identitasmu cukup nama dan angkatan.
         </p>
         <div className="mt-8 animate-fade-up" style={{ animationDelay: "200ms" }}>
           <FormPengaduan angkatan={daftarAngkatan()} />

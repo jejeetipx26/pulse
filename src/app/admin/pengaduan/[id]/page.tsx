@@ -9,6 +9,7 @@ import { WARNA_KATEGORI, WARNA_STATUS, type Kategori, type Status } from "@/lib/
 import StatusBadge from "@/app/components/pengaduan/StatusBadge";
 import StatusStepper from "@/app/components/pengaduan/StatusStepper";
 import FormTanggapan from "@/app/components/admin/FormTanggapan";
+import TombolHapus from "@/app/components/admin/TombolHapus";
 import Reveal from "@/app/components/layout/Reveal";
 
 const panel = "rounded-3xl border border-sky/40 bg-white/90 p-5 shadow-[0_8px_30px_rgba(23,155,194,0.12)] sm:p-7";
@@ -100,6 +101,9 @@ export default async function DetailPengaduan({ params }: { params: Promise<{ id
           <div className={panel}>
             <h2 className="mb-5 text-lg font-bold">Ubah status dan tanggapi</h2>
             <FormTanggapan id={id} status={p.status} tanggapan={p.tanggapan} />
+          </div>
+          <div className={`${panel} mt-6`}>
+            <TombolHapus id={id} />
           </div>
         </Reveal>
       </div>

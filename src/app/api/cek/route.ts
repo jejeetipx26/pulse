@@ -6,6 +6,7 @@ import { ambilIp, izinkan } from "@/lib/ratelimit";
 export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
   const kode = String(body?.kode ?? "").trim().toUpperCase();
+  
   if (!POLA_KODE.test(kode)) {
     return Response.json({ error: "Format kode salah. Contoh: ASP-AB23CD45" }, { status: 400 });
   }
@@ -14,11 +15,13 @@ export async function POST(req: Request) {
     return Response.json({ error: "Terlalu banyak pengecekan. Tunggu sebentar." }, { status: 429 });
   }
 
+  // Ubah 'judul' menjadi 'sifat' dan 'sifat_lain'
   const [rows] = await db.query<RowDataPacket[]>(
-    `SELECT id, judul, kategori, isi, status, tanggapan, created_at, (lampiran IS NOT NULL) AS ada_lampiran
+    `SELECT id, sifat, sifat_lain, kategori, isi, status, tanggapan, created_at, (lampiran IS NOT NULL) AS ada_lampiran
      FROM pengaduan WHERE tracking_code = ? LIMIT 1`,
     [kode]
   );
+  
   const p = rows[0];
   if (!p) {
     return Response.json({ error: "Kode tidak ditemukan. Pastikan kode yang dimasukkan benar." }, { status: 404 });
@@ -30,7 +33,11 @@ export async function POST(req: Request) {
   );
 
   return Response.json({
-    judul: p.judul,
+    // Kirimkan sebagai 'judul' ke frontend agar UI sebelumnya tidak rusak.
+    // Jika sifatnya 'Lainnya', tampilkan isi dari sifat_lain. Jika bukan, tampilkan sifatnya.
+    judul: p.sifat === "Lainnya" ? p.sifat_lain : p.sifat,
+    sifat: p.sifat,
+    sifat_lain: p.sifat_lain,
     kategori: p.kategori,
     isi: p.isi,
     status: p.status,

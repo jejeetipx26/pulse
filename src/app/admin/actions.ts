@@ -1,6 +1,8 @@
 "use server";
 
 import bcrypt from "bcryptjs";
+import { unlink } from "fs/promises";
+import path from "path";
 import type { RowDataPacket } from "mysql2";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -8,6 +10,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { getSession, requireAdmin } from "@/lib/session";
 import { izinkan } from "@/lib/ratelimit";
+import { UPLOAD_DIR } from "@/lib/lampiran";
 import { STATUS, type Status } from "@/lib/tipe";
 
 export type Hasil = { error?: string; ok?: string } | undefined;
@@ -79,4 +82,22 @@ export async function ubahPengaduan(_: Hasil, fd: FormData): Promise<Hasil> {
   revalidatePath("/admin");
   revalidatePath(`/admin/pengaduan/${id}`);
   return { ok: "Perubahan tersimpan." };
+}
+
+export async function hapusPengaduan(id: number) {
+  await requireAdmin();
+  if (!Number.isInteger(id)) return;
+
+  const [rows] = await db.query<RowDataPacket[]>("SELECT lampiran FROM pengaduan WHERE id = ?", [id]);
+  if (rows[0]) {
+    // riwayat_status ikut terhapus otomatis (ON DELETE CASCADE)
+    await db.query("DELETE FROM pengaduan WHERE id = ?", [id]);
+    const f = rows[0].lampiran as string | null;
+    if (f && /^[a-f0-9]{32}\.(jpg|png|webp)$/.test(f)) {
+      await unlink(path.join(UPLOAD_DIR, f)).catch(() => {});
+    }
+  }
+  revalidatePath("/admin");
+  revalidatePath("/");
+  redirect("/admin?dihapus=1");
 }

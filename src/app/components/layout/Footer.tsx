@@ -13,7 +13,7 @@ const tautan = "transition hover:text-aqua hover:underline underline-offset-4";
 
 export default function Footer() {
   return (
-    <footer className="mt-10 border-t border-aqua/60 bg-linear-to-br from-navy via-navy to-ocean text-white shadow-[0_-4px_24px_rgba(23,155,194,0.35)]">
+    <footer className="border-t border-aqua/60 bg-linear-to-br from-navy via-navy to-ocean text-white shadow-[0_-4px_24px_rgba(23,155,194,0.35)]">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-5 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <div className="flex items-center gap-2.5">
@@ -21,7 +21,7 @@ export default function Footer() {
             <span className="text-lg font-bold">PULSE</span>
           </div>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/75">
-            Platform aspirasi dan pengaduan mahasiswa yang dikelola BEM PSIK,
+            Platform aspirasi dan pengaduan mahasiswa yang dikelola BEM KM IK,
             Universitas Sriwijaya.
           </p>
         </div>
@@ -46,7 +46,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-white/15 px-4 py-4 text-center text-xs text-white/60">
-        © {new Date().getFullYear()} PULSE, BEM PSIK Universitas Sriwijaya
+        © {new Date().getFullYear()} PULSE, BEM KM IK Universitas Sriwijaya
       </div>
     </footer>
   );

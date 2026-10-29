@@ -14,6 +14,7 @@
     "iron-session": "^9.0.1",
     "lucide-react": "^1.62.0",
     "mysql2": "^3.24.6",
+    "natural": "^8.2.6",
     "next": "16.4.3",
     "react": "19.3.0",
     "react-dom": "19.3.0",

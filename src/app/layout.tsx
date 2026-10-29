@@ -17,7 +17,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "PULSE | Aspirasi Mahasiswa BEM PSIK Universitas Sriwijaya",
+  title: "PULSE | Aspirasi Mahasiswa BEM KM IK Universitas Sriwijaya",
   description:
     "Platform aspirasi dan pengaduan mahasiswa Program Studi Ilmu Keperawatan, Universitas Sriwijaya.",
 };
